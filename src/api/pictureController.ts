@@ -139,6 +139,7 @@ export async function uploadPictureUsingPost(
   options?: { [key: string]: any }
 ) {
   const formData = new FormData()
+
   if (file) {
     formData.append('file', file)
   }
