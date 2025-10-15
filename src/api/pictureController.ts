@@ -170,3 +170,33 @@ export async function uploadPictureUsingPost(
     ...(options || {}),
   })
 }
+
+/** uploadPictureByBatch POST /jay/file/upload/batch */
+export async function uploadPictureByBatchUsingPost(
+  body: API.PictureUploadByBatchRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseInt_>('/jay/file/upload/batch', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** uploadPictureByUrl POST /jay/file/upload/url */
+export async function uploadPictureByUrlUsingPost(
+  body: API.PictureUploadRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePictureVO_>('/jay/file/upload/url', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}

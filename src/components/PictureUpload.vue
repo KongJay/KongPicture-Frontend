@@ -15,6 +15,8 @@
       </div>
     </a-upload>
   </div>
+
+
 </template>
 <script setup lang="ts">
 import { message, type UploadProps } from 'ant-design-vue'
@@ -39,6 +41,7 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
   return isJpgOrPng && isLt2M
 }
 const loading = ref<boolean>(false)
+
 
 /**
  * 上传
