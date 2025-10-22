@@ -1,30 +1,71 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
-import { addSpaceUsingPost, listSpaceLevelUsingGet } from '../../api/spaceController'
+import { addSpaceUsingPost, listSpaceLevelUsingGet,getSpaceVoByIdUsingGet,updateSpaceUsingPost } from '../../api/spaceController'
+
 import { message } from 'ant-design-vue';
 import router from '@/router';
 import { SPACE_LEVEL_ENUM,SPACE_LEVEL_OPTIONS } from '@/constants/space'
 import {formatSize} from '@/utils/index'
+import { useRoute } from 'vue-router';
 const formData = reactive<API.SpaceAddRequest | API.SpaceUpdateRequest>({
   spaceName: '',
   spaceLevel: SPACE_LEVEL_ENUM.COMMON,
 })
 const loading = ref(false)
+const route = useRoute()
+const oldSpace = ref<API.SpaceVO>()
+
+// 获取老数据
+const getOldSpace = async () => {
+  // 获取数据
+  const id = route.query?.id
+  if (id) {
+    const res = await getSpaceVoByIdUsingGet({
+      id: id,
+    })
+    if (res.data.code === 0 && res.data.data) {
+      const data = res.data.data
+      oldSpace.value = data
+      formData.spaceName = data.spaceName
+      formData.spaceLevel = data.spaceLevel
+    }
+  }
+}
+
+// 页面加载时，请求老数据
+onMounted(() => {
+  getOldSpace()
+})
+
+
 const handleSubmit = async (values: any) => {
-  loading.value = true;
-  const res = await addSpaceUsingPost({
-    ...formData,
-  })
-  if (res.data.code === 0 && res.data.data) {
-    message.success("创建成功")
-    router.push({
-      path: `/space/${res.data.data}`,
+  const spaceId = oldSpace.value?.id
+  loading.value = true
+  let res
+  // 更新
+  if (spaceId) {
+    res = await updateSpaceUsingPost({
+      id: spaceId,
+      ...formData,
     })
   } else {
-    message.error('创建失败，' + res.data.message)
+    // 创建
+    res = await addSpaceUsingPost({
+      ...formData,
+    })
   }
-  loading.value = false;
+  if (res.data.code === 0 && res.data.data) {
+    message.success('操作成功')
+    let path = `/space/${spaceId ?? res.data.data}`
+    router.push({
+      path,
+    })
+  } else {
+    message.error('操作失败，' + res.data.message)
+  }
+  loading.value = false
 }
+
 const spaceLevelList = ref<API.SpaceLevel[]>([])
 
 // 获取空间级别
