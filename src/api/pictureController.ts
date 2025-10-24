@@ -122,6 +122,39 @@ export async function listPictureVoByPageWithCacheUsingPost(
   })
 }
 
+/** createPictureOutPaintingTask POST /jay/file/out_painting/create_task */
+export async function createPictureOutPaintingTaskUsingPost(
+  body: API.CreatePictureOutPaintingTaskRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseCreateOutPaintingTaskResponse_>(
+    '/jay/file/out_painting/create_task',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    }
+  )
+}
+
+/** getPictureOutPaintingTask GET /jay/file/out_painting/get_task */
+export async function getPictureOutPaintingTaskUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getPictureOutPaintingTaskUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseGetOutPaintingTaskResponse_>('/jay/file/out_painting/get_task', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  })
+}
+
 /** doPictureReview POST /jay/file/review */
 export async function doPictureReviewUsingPost(
   body: API.PictureReviewRequest,
@@ -212,7 +245,7 @@ export async function uploadPictureUsingPost(
         if (item instanceof Array) {
           item.forEach((f) => formData.append(ele, f || ''))
         } else {
-          formData.append(ele, JSON.stringify(item))
+          formData.append(ele, new Blob([JSON.stringify(item)], { type: 'application/json' }))
         }
       } else {
         formData.append(ele, item)
