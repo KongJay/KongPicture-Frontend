@@ -27,44 +27,22 @@
       </a-checkable-tag>
     </a-space>
   </div>
-  <!-- 图片列表 -->
-  <div class="list">
-  <a-list
-    :grid="{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }"
-    :data-source="dataList"
-    :pagination="pagination"
-    :loading="loading"
-  >
-    <template #renderItem="{ item: picture }">
-      <a-list-item style="padding: 0">
-        <!-- 单张图片 -->
-        <!-- 单张图片 -->
-        <a-card hoverable @click="doClickPicture(picture)">
-        <template #cover>
-          <img
-            style="height: 180px; object-fit: cover"
-            :alt="picture.name"
-            :src="picture.thumbnailUrl ?? picture.url"
-            loading="lazy"
-          />
-        </template>
-          <a-card-meta :title="picture.name">
-            <template #description>
-              <a-flex>
-                <a-tag color="green">
-                  {{ picture.category ?? '默认' }}
-                </a-tag>
-                <a-tag v-for="tag in picture.tags" :key="tag">
-                  {{ tag }}
-                </a-tag>
-              </a-flex>
-            </template>
-          </a-card-meta>
-        </a-card>
-      </a-list-item>
-    </template>
-  </a-list>
-    </div>
+<!-- 图片列表 -->
+<!-- 图片列表 -->
+<PictureList :dataList="dataList"
+  :loading="loading"
+  :showOp="false" 
+  :onReload="fetchData"
+/>
+
+<a-pagination
+  style="text-align: right"
+  v-model:current="searchParams.current"
+  v-model:pageSize="searchParams.pageSize"
+  :total="total"
+  @change="fetchData"
+/>
+
 </template>
 <script setup lang="ts">
 // 数据
@@ -75,6 +53,7 @@ import {
   listPictureVoByPageUsingPost,
 } from '@/api/pictureController.ts'
 import { useRouter } from 'vue-router'
+import PictureList from '@/components/PictureList.vue'
 const dataList = ref([])
 const total = ref(0)
 const loading = ref(true)
@@ -94,20 +73,7 @@ const categoryList = ref<string[]>([])
 const selectedCategory = ref<string>('all')
 const tagList = ref<string[]>([])
 const selectedTagList = ref<string[]>([])
-// 分页参数
-const pagination = computed(() => {
-  return {
-    current: searchParams.current ?? 1,
-    pageSize: searchParams.pageSize ?? 10,
-    total: total.value,
-    // 切换页号时，会修改搜索参数并获取数据
-    onChange: (page, pageSize) => {
-      searchParams.current = page
-      searchParams.pageSize = pageSize
-      fetchData()
-    },
-  }
-})
+
 const fetchData = async () => {
   loading.value = true
   // 转换搜索参数
@@ -143,14 +109,6 @@ const getTagCategoryOptions = async () => {
     message.error('加载分类标签失败，' + res.data.message)
   }
 }
-const router = useRouter()
-// 跳转至图片详情
-const doClickPicture = (picture) => {
-  router.push({
-    path: `/picture/${picture.id}`,
-  })
-}
-
 // 页面加载时请求一次
 onMounted(() => {
   fetchData()

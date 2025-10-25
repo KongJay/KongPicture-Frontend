@@ -9,12 +9,7 @@
       </RouterLink>
     </a-col>
     <a-col flex="auto">
-      <a-menu
-        v-model:selectedKeys="current"
-        mode="horizontal"
-        :items="items"
-        @click="doMenuClick"
-      />
+      <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="doMenuClick" />
     </a-col>
     <a-col flex="120px">
       <div class="user-login-status">
@@ -31,6 +26,13 @@
                   <UserOutlined />
                   个人信息
                 </a-menu-item>
+                <a-menu-item>
+                  <router-link to="/my_space">
+                    <UserOutlined />
+                    我的空间
+                  </router-link>
+                </a-menu-item>
+
                 <a-menu-item @click="doLogout">
                   <LogoutOutlined />
                   退出登录
@@ -39,23 +41,13 @@
             </template>
           </a-dropdown>
           <!-- 弹出模态框 -->
-          <a-modal
-            class="a-modal"
-            v-model:open="isModalVisible"
-            title="编辑个人信息"
-            @ok="saveProfile"
-            @cancel="cancelEdit"
-          >
+          <a-modal class="a-modal" v-model:open="isModalVisible" title="编辑个人信息" @ok="saveProfile" @cancel="cancelEdit">
             <a-form :model="editForm" :label-col="{ span: 4 }" :wrapper-col="{ span: 14 }">
               <a-form-item label="用户名">
                 <a-input v-model:value="editForm.userName" placeholder="请输入用户名" />
               </a-form-item>
               <a-form-item label="个人简介">
-                <a-input
-                  v-model:value="editForm.userProfile"
-                  placeholder="请输入个人简介"
-                  type="textarea"
-                />
+                <a-input v-model:value="editForm.userProfile" placeholder="请输入个人简介" type="textarea" />
               </a-form-item>
             </a-form>
           </a-modal>
@@ -72,7 +64,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue'
-import { HomeOutlined,UserOutlined,LogoutOutlined } from '@ant-design/icons-vue'
+import { HomeOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons-vue'
 import { type MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/user.ts'
@@ -118,7 +110,7 @@ const cancelEdit = () => {
 const saveProfile = async () => {
   const { userName, userProfile } = editForm.value
   const res = await updateUserUsingPost({
-    id:loginUserStore.loginUser.id,
+    id: loginUserStore.loginUser.id,
     userName,
     userProfile,
   })
@@ -212,9 +204,9 @@ const filterMenus = (menus = [] as MenuProps['items']) => {
   return menus?.filter((menu) => {
     const item = menuToRouteItem(menu);
     if (item.meta?.hideInMenu) {
-        return false
+      return false
     }
-    return checkAccess(loginUserStore.loginUser,item.meta?.access as string)
+    return checkAccess(loginUserStore.loginUser, item.meta?.access as string)
   })
 }
 
@@ -227,9 +219,11 @@ const items = computed<MenuProps['items']>(() => filterMenus(originItems))
   display: flex;
   align-items: center;
 }
+
 .a-modal {
   z-index: 9999;
 }
+
 .title {
   color: black;
   font-size: 18px;

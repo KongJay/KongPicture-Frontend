@@ -4,9 +4,21 @@
       <a-layout-header class="header">
         <GlobalHeader />
       </a-layout-header>
-      <a-layout-content class="content">
-        <router-view />
-      </a-layout-content>
+
+      <a-layout>
+      <a-layout-sider v-if="loginUserStore.loginUser.id" 
+  class="sider"
+  width="200" 
+  breakpoint="lg"
+  collapsed-width="0"
+>
+          <GlobalSider />
+        </a-layout-sider>
+        <a-layout-content class="content">
+          <router-view />
+        </a-layout-content>
+      </a-layout>
+
       <a-layout-footer class="footer">
         <a href="https://www.github/Kongjay" target="_blank"> 红模仿 by 周杰伦 </a>
       </a-layout-footer>
@@ -15,27 +27,30 @@
 </template>
 <script setup lang="ts">
 import GlobalHeader from '@/components/GlobalHeader.vue'
+import GlobalSider from '@/components/GlobalSider.vue';
+import { useLoginUserStore } from '@/stores/user';
+const loginUserStore = useLoginUserStore()
+
 </script>
 <style scoped>
-#basicLayout .content {
-  background: linear-gradient(to right, #fefefe, #fff);
-  margin-bottom: 28px;
-  padding: 20px;
-}
 #basicLayout .header {
-  padding-inline: 20px;
-  margin-bottom: 16px;
-  color: unset;
-  background: white;
+  margin-bottom: 1px;
+  background: #fff;
 }
 
-#basicLayout .footer {
-  background: #efefef;
-  padding: 16px;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
+#basicLayout .content {
+  padding: 28px;
 }
+
+#basicLayout .sider {
+  background: #fff;
+  padding-top: 20px;
+  border-right: 0.5px solid #eee;
+}
+
+#basicLayout :deep(.ant-menu-root) {
+  border-bottom: none !important;
+  border-inline-end: none !important;
+}
+
 </style>

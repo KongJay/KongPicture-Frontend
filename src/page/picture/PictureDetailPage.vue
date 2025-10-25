@@ -5,6 +5,7 @@ import { deletePictureUsingPost, getPictureVoByIdUsingGet } from '@/api/pictureC
 import { useLoginUserStore } from '@/stores/user.ts'
 import router from '@/router'
 import { downloadImage, formatSize } from '@/utils/index.ts'
+import { toHexColor } from '@/utils/index'
 const props = defineProps<{
   id: string | number
 }>()
@@ -38,9 +39,17 @@ const canEdit = computed(() => {
   return loginUser.id === user.id || loginUser.userRole === 'admin'
 })
 // 编辑
+
 const doEdit = () => {
-  router.push('/add_picture?id=' + picture.value.id)
+  router.push({
+    path: '/add_picture',
+    query: {
+      id: picture.value.id,
+      spaceId: picture.value.spaceId
+    }
+  })
 }
+
 // 删除
 const doDelete = async () => {
   const id = picture.value.id
@@ -54,6 +63,8 @@ const doDelete = async () => {
     message.error('删除失败')
   }
 }
+
+
 // 处理下载
 const doDownload = () => {
   downloadImage(picture.value.url)
@@ -111,6 +122,20 @@ onMounted(() => {
           <a-descriptions-item label="大小">
             {{ formatSize(picture.picSize) }}
           </a-descriptions-item>
+          <a-descriptions-item label="主色调">
+            <a-space>
+              {{ picture.picColor ?? '-' }}
+              <div
+                v-if="picture.picColor"
+                :style="{
+        backgroundColor: toHexColor(picture.picColor),
+        width: '16px',
+        height: '16px',
+      }"
+              />
+            </a-space>
+          </a-descriptions-item>
+
         </a-descriptions>
       </a-card>
       <a-button type="primary" @click="doDownload">

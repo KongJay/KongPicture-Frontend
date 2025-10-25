@@ -200,9 +200,11 @@ const pagination = computed(() => {
 // 获取数据
 const fetchData = async () => {
   try {
-    const res = await listPictureByPageUsingPost({
-      ...searchParams,
-    })
+const res = await listPictureByPageUsingPost({
+  ...searchParams,
+  nullSpaceId: true,
+})
+
     if (res.data?.code === 0) {
       dataList.value = res.data.data?.records ?? []
       total.value = res.data.data?.total ?? 0
