@@ -27,6 +27,7 @@ import { ref } from 'vue'
 import ImageCropper from '@/components/ImageCropper.vue'
 interface Props {
   picture?: API.PictureVO
+  spaceId?: number
   onSuccess?: (newPicture: API.PictureVO) => void
 }
 
@@ -53,6 +54,8 @@ const handleUpload = async ({ file }: any) => {
   loading.value = true
   try {
     const params = props.picture ? { id: props.picture.id } : {}
+    params.spaceId = props.spaceId;
+    console.log("params",params);
     const res = await uploadPictureUsingPost(params, {}, file)
     if (res.data.code === 0 && res.data.data) {
       message.success('图片上传成功')
@@ -61,6 +64,7 @@ const handleUpload = async ({ file }: any) => {
     } else {
       message.error('图片上传失败，' + res.data.message)
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     message.error('图片上传失败')
   } finally {
